@@ -5,3 +5,12 @@ body {
 .nav-top-padding {
 	padding-top: 9px;
 }
+
+.page-element {
+	
+	margin: 3px;
+}
+
+.numberInputs {
+	width: 55px;
+}

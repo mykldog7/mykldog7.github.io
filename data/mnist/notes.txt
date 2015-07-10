@@ -1,0 +1,3 @@
+From: http://yann.lecun.com/exdb/mnist/
+
+Needs to be shrunk to be downloaded. 
