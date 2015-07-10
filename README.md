@@ -8,6 +8,9 @@ Uses a Neural Net to identify handwritten digits.
 #Features 
 -perform training on client side. 
 -save the neuralnet (off load JSON object).
+- must force the user to proceed sequentially by unlocking and locking elements that can no longer be interacted with. 
+-    ie. the image dimensions can't be messed with after the images are loaded. they get greyed out unless the reset button is clicked.
+- if a network is applied to an image that has the wrong size.. throw nice message.  
  
 -upload an image containing handwritten digits to identify. 
 -select an image from the dataset
@@ -26,6 +29,8 @@ maximum error should make the feature silent.
 
 This type of features will be able to be vertical or horizontal or diagonal edge detectors. 
 It should also be possible for them to match line ends. 
+It could also specify that an area should be largely black or largely white..
+I think it has lots of options of working well and identifying interesting features. 
 
 for all the intermediate layers... 
 sum incoming weights. (with bias)

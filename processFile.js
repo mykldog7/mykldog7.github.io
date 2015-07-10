@@ -24,12 +24,17 @@ function LoadImagesFromFile(data, callbackFunction){
 			var imageArray = [];
 			while(data.imageCount > 0){
 				//for every 8 bits turn this into an integer value between 0 and 255. 
-				var newImage = [];
-				//grab the image.
+				var newImage = {};
+				newImage.values = [];
+				newImage.width = data.imageWidth;
+				newImage.height = data.imageHeight;
+				//grab the image pixel by pixel.
 				for(var i=0;i<imageSize;i++){
-					newImage.push(dataViewer.getUint8(offsetPointer));	//get an usigned (8-bit) int 
+					newImage.values.push(dataViewer.getUint8(offsetPointer));	//get an usigned (8-bit) int and append it to the image array.
 					offsetPointer++;	//move to next byte. 
-				}				
+				}
+				//Provide function to get pixel value by coordinates.
+				newImage.getPixelAt = function(x,y){ return this.values[y*this.width + x]; };			
 				imageArray.push(newImage);
 				//update looping variables. images counter and byte array offset. 
 				data.imageCount--;		//reduce images remaining count

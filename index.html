@@ -39,6 +39,14 @@ function callLoadImagesFromFile(){
 		makeCanvasElements(imagesHolderElem, imgArr, params);
 	});
 }
+
+/*Grabs the values and sets up the network..*/
+function constructNetwork(){
+	var params = 	{	width: +document.getElementById('img-dim-width').value, 
+						height: +document.getElementById('img-dim-height').value
+					};
+	initNetwork(params, +document.getElementById('nn-features').value); 	//in jsNN.js
+}
 </script>
 
 </head>
@@ -98,6 +106,7 @@ function callLoadImagesFromFile(){
 				</div>
 			</div>
 		</div>
+		<div class="clearfix visible-sm"></div>
 		<div class="col-sm-6 col-md-4 col-lg-4">
 			<div class="page-element">
 				<h2>Configure Neural Net...</h2>
@@ -109,7 +118,9 @@ function callLoadImagesFromFile(){
 					Stop training when...<br> 
 					Error percentage:<input class="numberinputs" type="number" id="nn-stop-error" value="0" /><br>
 					Training cycles:<input class="numberinputs" type="number" id="nn-stop-cycles" value="4" /><br>
-					<button type="button" onclick="constructNetwork()">Construct network</button>
+					<button type="button" onclick="constructNetwork()">Construct network</button> or 
+					<button type="button" onclick="loadNetwork()">Load from file</button>
+					
 				</div>
 			</div>
 		</div>
