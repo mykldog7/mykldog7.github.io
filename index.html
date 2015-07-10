@@ -10,6 +10,7 @@
 <script src="lib/jquery-2.1.4.min.js"></script> 
 <script src="lib/bootstrap-3.3.5-dist/js/bootstrap.min.js"></script>
 <script src="processFile.js"></script>
+<script src="makeCanvas.js"></script>
 <script src="jsNN.js"></script>
 
 <!-- CSS -->
@@ -29,9 +30,12 @@ function callLoadImagesFromFile(){
 	data.imageHeight = +document.getElementById('img-dim-height').value;
 	data.imageSpacing = +document.getElementById('img-bytes-between').value;
 	
-	LoadImagesFromFile(data, function(response){
-		alert("Returned from loading file.. now display images");
-		console.log(response);
+	LoadImagesFromFile(data, function(imgArr){
+		console.log("Image array from File:" + imgArr);
+		//prepare element and params for the images generating function.
+		var imagesHolderElem = document.getElementById('imageHolder');
+		var params = {width: data.imageWidth, height: data.imageHeight};
+		makeCanvasElements(imagesHolderElem, imgArr, params);
 	});
 }
 </script>
@@ -63,53 +67,46 @@ function callLoadImagesFromFile(){
 <!-- Content -->
 <div class="container">
 	<div class="row">
-		<div class="col-sm-12"><h2 style="margin-top: 0px;">Train a Network...</h2></div>
+		<div class="col-sm-10"><h2 style="margin-top: 0px;">JavaScript Neural Network Digit Recognizer</h2></div>
 	</div>
 	<div class="row">
-		<div class="col-sm-12 col-md-4 col-lg-4">
+		<div class="col-sm-6 col-md-4 col-lg-4">
 			<div class="page-element">
-				<h2>Image Files</h2>
+				<h2>Load Image Files...</h2>
 				<div>
 					Specify how image is stored in file. <br>
-					Offset to first image:<input class="numberInputs" type="number" id="img-bytes-before" value="16" /><br>
+					Offset to first image:<input class="numberinputs" type="number" id="img-bytes-before" value="16" /><br>
 					Image Dimensions:<br> 
-					Width:<input class="numberInputs" type="number" id="img-dim-width" value="28" />&nbsp;
-					Height:<input class="numberInputs" type="number" id="img-dim-height" value="28" /><br>
-					Bytes between images:<input class="numberInputs" type="number" id="img-bytes-between" value="0" /><br>
-					Image count:<input class="numberInputs" type="number" id="img-count" value="4" /><br>
+					Width:<input class="numberinputs" type="number" id="img-dim-width" value="28" />&nbsp;
+					Height:<input class="numberinputs" type="number" id="img-dim-height" value="28" /><br>
+					Bytes between images:<input class="numberinputs" type="number" id="img-bytes-between" value="0" /><br>
+					Image count:<input class="numberinputs" type="number" id="img-count" value="4" /><br>
 					Specify file:
 					<input type="file" id="fileSelector" /><br>
 					<button type="button" onclick="callLoadImagesFromFile()">Process file</button>
 				</div>
 			</div>
 		</div>
-		<div class="col-sm-12 col-md-4 col-lg-4">
+		<div class="col-sm-6 col-md-4 col-lg-4">
 			<div class="page-element">
-				<h2>Images</h2>
+				<h2>View Images...</h2>
 				<div>
-					<div class="container-fluid">
-						<div class="row">
-							<div class="col-sm-6">aaaaaaaaaaaa aaaaaaaaaaaa</div>
-							<div class="col-sm-6">bbbbbbbbbbbb bbbbbbbbbbbb</div>
-							<div class="col-sm-6">cccccccccccc cccccccccccc</div>
-							<div class="col-sm-6">dddddddddddd dddddddddddd</div>
-							<div class="col-sm-6">eeeeeeeeeeee eeeeeeeeeeee</div>
-							<div class="col-sm-6">ffffffffffff ffffffffffff</div>
-						</div>
+					<div class="row" id="imageHolder">
+						<div class="image-display col-sm-6">No images loaded yet. </div>
 					</div>
 				</div>
 			</div>
 		</div>
-		<div class="col-sm-12 col-md-4 col-lg-4">
-			<div class="page-element"><h2>Net Controls</h2>Place for net controls</div>
+		<div class="col-sm-6 col-md-4 col-lg-4">
+		
+			<div class="page-element"><h2>Configure Neural Net...</h2>Place for net controls</div>
 		</div>
 	</div>
 	
 </div>
 
 <!-- Footer -->
-<div class="container">
-		<div><br>Developed by Michael Riley - 2015</div>
-</div>
+<div><br><hr>Developed by Michael Riley - 2015</div>
+
 </body>
 </html>

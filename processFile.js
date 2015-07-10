@@ -8,10 +8,8 @@
 
 //Incoming data is all of the properties needed to make sense of the file. 
 // callbackFunction is called once the images have been loaded and parsed. 
-var debug_data;
 function LoadImagesFromFile(data, callbackFunction){
 	//Create file reader
-	debug_data = data;
 	var reader = new FileReader();
 	
 	//When reading is completed we will... callbackFunction. attach event handler. 
