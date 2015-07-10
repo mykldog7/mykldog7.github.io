@@ -16,21 +16,21 @@ function generateFeatures(imageDimensions, numberOfFeaturesToGenerate){
 		featureMaxRadius = 3;		//how far from the feature center can other interest pixels be?
 		featureCenter = {	x:Math.floor((Math.random() * imageDimensions.width) + 1),	
 							y:Math.floor((Math.random() * imageDimensions.height) + 1),
-							val: targetValues[Math.floor(Math.random()*targetValues.length)]}
+							val: targetValues[Math.floor(Math.random()*targetValues.length)]}		//selects one of the indexes in the array.
 		var singleFeature = {
 			locations : [	featureCenter,
 							{	x: Math.floor((Math.random() * 2*featureMaxRadius) + 1)-featureMaxRadius, 
-								y: ,
-								val: 
-							},{	x: , 
-								y: ,
-								val: 
-							},{	x: , 
-								y: ,
-								val: 
-							},{	x: , 
-								y: ,
-								val: 
+								y: Math.floor((Math.random() * 2*featureMaxRadius) + 1)-featureMaxRadius,
+								val: targetValues[Math.floor(Math.random()*targetValues.length)]
+							},{	x: Math.floor((Math.random() * 2*featureMaxRadius) + 1)-featureMaxRadius, 
+								y: Math.floor((Math.random() * 2*featureMaxRadius) + 1)-featureMaxRadius,
+								val: targetValues[Math.floor(Math.random()*targetValues.length)]
+							},{	x: Math.floor((Math.random() * 2*featureMaxRadius) + 1)-featureMaxRadius, 
+								y: Math.floor((Math.random() * 2*featureMaxRadius) + 1)-featureMaxRadius,
+								val: targetValues[Math.floor(Math.random()*targetValues.length)]
+							},{	x: Math.floor((Math.random() * 2*featureMaxRadius) + 1)-featureMaxRadius, 
+								y: Math.floor((Math.random() * 2*featureMaxRadius) + 1)-featureMaxRadius,
+								val: targetValues[Math.floor(Math.random()*targetValues.length)]
 							}]
 			getValue : 	function(image){ 
 							/* Implement this */
