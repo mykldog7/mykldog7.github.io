@@ -12,6 +12,7 @@
 <script src="processFile.js"></script>
 <script src="makeCanvas.js"></script>
 <script src="jsNN.js"></script>
+<script src="featureSetup.js"></script>
 
 <!-- CSS -->
 <link href="lib/bootstrap-3.3.5-dist/css/bootstrap.min.css" rel="stylesheet">
@@ -74,7 +75,7 @@ function callLoadImagesFromFile(){
 			<div class="page-element">
 				<h2>Load Image Files...</h2>
 				<div>
-					Specify how image is stored in file. <br>
+					Image file paramters<br>
 					Offset to first image:<input class="numberinputs" type="number" id="img-bytes-before" value="16" /><br>
 					Image Dimensions:<br> 
 					Width:<input class="numberinputs" type="number" id="img-dim-width" value="28" />&nbsp;
@@ -98,15 +99,26 @@ function callLoadImagesFromFile(){
 			</div>
 		</div>
 		<div class="col-sm-6 col-md-4 col-lg-4">
-		
-			<div class="page-element"><h2>Configure Neural Net...</h2>Place for net controls</div>
+			<div class="page-element">
+				<h2>Configure Neural Net...</h2>
+				<div>Neural Net parameters<br>
+					Number of Features<input class="numberinputs" type="number" id="nn-features" value="50" /><br>
+					Network Architecture..<br> 
+					Hidden layers:<input class="numberinputs" type="number" id="nn-hidden-layer-count" value="2" /><br>
+					Nodes in each hidden layer:<input class="numberinputs" type="number" id="nn-hidden-layer-size" value="25" /><br>
+					Stop training when...<br> 
+					Error percentage:<input class="numberinputs" type="number" id="nn-stop-error" value="0" /><br>
+					Training cycles:<input class="numberinputs" type="number" id="nn-stop-cycles" value="4" /><br>
+					<button type="button" onclick="constructNetwork()">Construct network</button>
+				</div>
+			</div>
 		</div>
 	</div>
 	
 </div>
 
 <!-- Footer -->
-<div><br><hr>Developed by Michael Riley - 2015</div>
+<div><br><hr>&nbsp; Developed by Michael Riley - 2015</div>
 
 </body>
 </html>

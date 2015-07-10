@@ -11,3 +11,40 @@ Uses a Neural Net to identify handwritten digits.
  
 -upload an image containing handwritten digits to identify. 
 -select an image from the dataset
+
+//What kind of features are we going to use...?
+/*
+It should be subject to change. 
+How about this.. 
+Randomly select 5 pixels which are all reasonably close. (within 3-4 pixels)
+For each of these 5 pixels. randomly select whether or not is it should be black(255) or white(0). 
+Add up the error of all these inputs. 
+This is the difference between their value and their target(255 or 0)
+put the difference sum through a linear transform to map the value to between 0 and 1. 
+zero error should make the feature really fire off.
+maximum error should make the feature silent.
+
+This type of features will be able to be vertical or horizontal or diagonal edge detectors. 
+It should also be possible for them to match line ends. 
+
+for all the intermediate layers... 
+sum incoming weights. (with bias)
+put sum through transfer function (sigmoid) this gives a value between 0 and 1. 
+Which forms the output of the node.
+
+For the final output layer... 
+The classification of the digit corresponds to the output node with the highest output. 
+
+*/
+
+//Random-ness distribution tested with:
+var featureMaxRadius = 5;
+var a = 0;
+var pC = 0;
+var nC = 0;
+for(var i=0;i<100000;i++){
+ a = Math.floor((Math.random() * 2*featureMaxRadius) + 1)-featureMaxRadius
+ if( a > 0 ) {pC++}
+ else {nC++}
+}
+console.log("p:"+ pC + " n: " + nC + " (p)/(n): " + pC/nC);
