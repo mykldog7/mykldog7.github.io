@@ -3,7 +3,7 @@ Uses a Neural Net to identify handwritten digits.
 
 #Implements a NeuralNet in order to do classification work. 
 
-#Perform some basic stretching and processing of the input images. 
+Perform some basic stretching and processing of the input images. 
 
 #Features 
 -perform training on client side. 

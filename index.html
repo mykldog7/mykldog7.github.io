@@ -13,6 +13,9 @@
 <script src="makeCanvas.js"></script>
 <script src="jsNN.js"></script>
 <script src="featureSetup.js"></script>
+<script src="hiddenLayerSetup.js"></script>
+<script src="outputLayers.js"></script>
+<script src="utils.js"></script>
 
 <!-- CSS -->
 <link href="lib/bootstrap-3.3.5-dist/css/bootstrap.min.css" rel="stylesheet">
@@ -20,17 +23,25 @@
 
 <!-- Scripts -->
 <script>
+//GLOBALS
+//storage for images and labels. used by jsNN.js so that the network can access the images. 
+var imgArr = [];
+var lblArray = [];
+//This global is the weights and feature locations. It should be saveable. 
+var NeuralNetwork;
+
 /*Grabs the values from the fields and makes a data object and then calls the method in processFile.js*/
 function callLoadImagesFromFile(){
 	//Construct data object with configuration parameters and file data. 
 	var data = {};
-	data.file = document.getElementById('fileSelector').files[0];
+	data.file = document.getElementById('imageFileSelector').files[0];
 	data.initOffset = +document.getElementById('img-bytes-before').value;
 	data.imageCount = +document.getElementById('img-count').value;
 	data.imageWidth = +document.getElementById('img-dim-width').value;
 	data.imageHeight = +document.getElementById('img-dim-height').value;
 	data.imageSpacing = +document.getElementById('img-bytes-between').value;
 	
+	//in processFile.js
 	LoadImagesFromFile(data, function(imgArr){
 		console.log("Image array from File:" + imgArr);
 		//prepare element and params for the images generating function.
@@ -40,13 +51,37 @@ function callLoadImagesFromFile(){
 	});
 }
 
+/*Grab the labels from the label file and then place on top of canvas elements.*/
+function callLoadLabelsFromFile(){
+	var data = {};
+	data.file = document.getElementById('labelFileSelector').files[0];
+	data.initOffset = +document.getElementById('label-bytes-before').value;
+	data.spaceBetweenLabels = +document.getElementById('label-bytes-between').value;
+	data.labelCount = +document.getElementById('img-count').value;		//same count as images.. makes sense right?
+	
+	//in processFile.js
+	LoadLabelsFromFile(data, function(lblArray){
+		console.log("Labels from file:" + lblArray);
+		//prepare element and params for the images generating function.
+		var imagesHolderElem = document.getElementById('imageHolder');
+		addLablesToCanvases(imagesHolderElem, lblArray);
+	});
+}
+
 /*Grabs the values and sets up the network..*/
 function constructNetwork(){
 	var params = 	{	width: +document.getElementById('img-dim-width').value, 
 						height: +document.getElementById('img-dim-height').value
 					};
-	initNetwork(params, +document.getElementById('nn-features').value); 	//in jsNN.js
+	//in jsNN.js
+	initNetwork(	params,
+					+document.getElementById('nn-features').value,
+					+document.getElementById('nn-hidden-layer-count').value,
+					+document.getElementById('nn-hidden-layer-size').value
+				); 	
 }
+
+
 </script>
 
 </head>
@@ -81,9 +116,9 @@ function constructNetwork(){
 	<div class="row">
 		<div class="col-sm-6 col-md-4 col-lg-4">
 			<div class="page-element">
-				<h2>Load Image Files...</h2>
+				<h2>Load Image/Label Files...</h2>
 				<div>
-					Image file paramters<br>
+					Image file options:<br>
 					Offset to first image:<input class="numberinputs" type="number" id="img-bytes-before" value="16" /><br>
 					Image Dimensions:<br> 
 					Width:<input class="numberinputs" type="number" id="img-dim-width" value="28" />&nbsp;
@@ -91,8 +126,13 @@ function constructNetwork(){
 					Bytes between images:<input class="numberinputs" type="number" id="img-bytes-between" value="0" /><br>
 					Image count:<input class="numberinputs" type="number" id="img-count" value="4" /><br>
 					Specify file:
-					<input type="file" id="fileSelector" /><br>
-					<button type="button" onclick="callLoadImagesFromFile()">Process file</button>
+					<input type="file" id="imageFileSelector" />
+					<button type="button" class="clickbutton" onclick="callLoadImagesFromFile()">Load Images</button><br><br>
+					Label file options:<br>
+					Offset to first label:<input class="numberinputs" type="number" id="label-bytes-before" value="8" /><br>
+					Bytes between labels:<input class="numberinputs" type="number" id="label-bytes-between" value="0" /><br>
+					<input type="file" id="labelFileSelector" />
+					<button type="button" class="clickbutton" onclick="callLoadLabelsFromFile()">Load Labels</button>
 				</div>
 			</div>
 		</div>
@@ -101,7 +141,7 @@ function constructNetwork(){
 				<h2>View Images...</h2>
 				<div>
 					<div class="row" id="imageHolder">
-						<div class="image-display col-sm-6">No images loaded yet. </div>
+						<div class="image-display">&nbsp;Once loaded, images will appear here. </div>
 					</div>
 				</div>
 			</div>
@@ -111,16 +151,25 @@ function constructNetwork(){
 			<div class="page-element">
 				<h2>Configure Neural Net...</h2>
 				<div>Neural Net parameters<br>
-					Number of Features<input class="numberinputs" type="number" id="nn-features" value="50" /><br>
+					Number of Features<input class="numberinputs" type="number" id="nn-features" value="10" /><br>
 					Network Architecture..<br> 
-					Hidden layers:<input class="numberinputs" type="number" id="nn-hidden-layer-count" value="2" /><br>
-					Nodes in each hidden layer:<input class="numberinputs" type="number" id="nn-hidden-layer-size" value="25" /><br>
-					Stop training when...<br> 
+					Hidden layers:<input class="numberinputs" type="number" id="nn-hidden-layer-count" value="3" /><br>
+					Nodes in each hidden layer:<input class="numberinputs" type="number" id="nn-hidden-layer-size" value="5" /><br>
+					<button type="button" class="clickbutton" onclick="constructNetwork()">Construct network</button> or 
+					<button type="button" class="clickbutton" onclick="loadNetwork()">Load from file</button>
+				</div>
+			</div>
+		</div>
+		<div class="clearfix visible-md visible-lg"></div>
+		<div class="col-sm-6 col-md-4 col-lg-4">
+			<div class="page-element">
+				<h2>Train Network...</h2>
+				<div>Partition Images<br>
+					Percentage for training:<input class="numberinputs" type="number" id="dataset-training-percent" value="100" /><br>
+					Training parameters<br>
 					Error percentage:<input class="numberinputs" type="number" id="nn-stop-error" value="0" /><br>
 					Training cycles:<input class="numberinputs" type="number" id="nn-stop-cycles" value="4" /><br>
-					<button type="button" onclick="constructNetwork()">Construct network</button> or 
-					<button type="button" onclick="loadNetwork()">Load from file</button>
-					
+					<button type="button" class="clickbutton" onclick="trainNetwork()">Train network</button>
 				</div>
 			</div>
 		</div>

@@ -9,9 +9,7 @@
 //Loop over every image in the imagesArray. 
 // add generated canvas elements to the parentELEM. (blank it first.)
 // do this according to the imageParameters object.
-var imgA; 
 function makeCanvasElements(parentELEM, imagesArray, imageParameters){
-	imgA = imagesArray;	//globalize so I can debug it. //REMOVE THIS LINE AND THE ONE ABOVE.
 	parentELEM.innerHTML = "";	//make sure the thing is empty. We want to overwrite. 
 	imagesArray.forEach(function(image,index){
 		var canvas = document.createElement("canvas");
@@ -33,5 +31,22 @@ function makeCanvasElements(parentELEM, imagesArray, imageParameters){
 		});
 		graphicContext.putImageData(imageData, 0, 0);	//imageData and upper left hand corner coordinates. 
 		parentELEM.appendChild(canvas);
+	});
+}
+/*Add labels to canvas elements*/
+function addLablesToCanvases(parentELEM, labelArray){
+	labelArray.forEach(function(label,index){
+		var cElem = document.getElementById("image-"+index);
+		var gcontext = cElem.getContext("2d");
+		var xO = 21;
+		var yO = 18;
+		var w = 7;
+		var h = 10;
+		gcontext.fillStyle = "rgba(144, 238, 144, 0.6)";;
+		gcontext.fillRect(xO, yO, w, h)
+		gcontext.font = "9pt sans-serif";
+		gcontext.fillStyle = "yellow";
+		gcontext.fillText(""+label, xO, yO+h);
+		
 	});
 }

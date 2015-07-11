@@ -11,7 +11,6 @@
 function LoadImagesFromFile(data, callbackFunction){
 	//Create file reader
 	var reader = new FileReader();
-	
 	//When reading is completed we will... callbackFunction. attach event handler. 
 	reader.onloadend = function(evt){
 		if (evt.target.readyState == FileReader.DONE){
@@ -44,8 +43,31 @@ function LoadImagesFromFile(data, callbackFunction){
 			callbackFunction(imageArray);
 		}
 	}
-	
 	//actually read the file.
 	reader.readAsArrayBuffer(data.file) 
-	
+}
+
+//For reading labels. 
+function LoadLabelsFromFile(data, callbackFunction){
+	//Create file reader
+	var reader = new FileReader();
+	//When reading is completed we will... callbackFunction. attach event handler. 
+	reader.onloadend = function(evt){
+		if (evt.target.readyState == FileReader.DONE){
+			//Arraybuffer used to manipulate binary data. 
+			var arrayBuf = reader.result;
+			var dataViewer = new DataView(arrayBuf);		//Gives the methods we use to view the binary data. 
+			var offsetPointer = data.initOffset;	
+			var labelArray = [];			//storage for labels.
+			while(data.labelCount > 0){
+				labelArray.push(dataViewer.getUint8(offsetPointer));	//get an usigned (8-bit) int and append it to the array.
+				data.labelCount--;		//reduce remaining count
+				offsetPointer += data.spaceBetweenLabels+1;		//space between labels
+			}
+			//Now the array is constructed.. each element in the array is one of the labels.
+			callbackFunction(labelArray);
+		}
+	}
+	//actually read the file.
+	reader.readAsArrayBuffer(data.file) 
 }
