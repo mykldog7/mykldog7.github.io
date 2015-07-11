@@ -38,15 +38,14 @@ function addLablesToCanvases(parentELEM, labelArray){
 	labelArray.forEach(function(label,index){
 		var cElem = document.getElementById("image-"+index);
 		var gcontext = cElem.getContext("2d");
-		var xO = 21;
+		var xO = 21;		//postion and size of the small label...
 		var yO = 18;
 		var w = 7;
 		var h = 10;
-		gcontext.fillStyle = "rgba(144, 238, 144, 0.6)";;
+		gcontext.fillStyle = "rgba(144, 238, 144, 0.6)";	//color of box.	
 		gcontext.fillRect(xO, yO, w, h)
 		gcontext.font = "9pt sans-serif";
-		gcontext.fillStyle = "yellow";
-		gcontext.fillText(""+label, xO, yO+h);
-		
+		gcontext.fillStyle = "yellow";						//color of text.	
+		gcontext.fillText(""+label, xO, yO+h);				//actually draw text. 
 	});
 }
