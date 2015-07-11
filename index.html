@@ -16,6 +16,7 @@
 <script src="hiddenLayerSetup.js"></script>
 <script src="outputLayers.js"></script>
 <script src="utils.js"></script>
+<script src="nntrain.js"></script>
 
 <!-- CSS -->
 <link href="lib/bootstrap-3.3.5-dist/css/bootstrap.min.css" rel="stylesheet">
@@ -42,12 +43,13 @@ function callLoadImagesFromFile(){
 	data.imageSpacing = +document.getElementById('img-bytes-between').value;
 	
 	//in processFile.js
-	LoadImagesFromFile(data, function(imgArr){
-		console.log("Image array from File:" + imgArr);
+	LoadImagesFromFile(data, function(imgArray){
+		console.log("Image array from File:" + imgArray);
+		imgArr=imgArray;
 		//prepare element and params for the images generating function.
 		var imagesHolderElem = document.getElementById('imageHolder');
 		var params = {width: data.imageWidth, height: data.imageHeight};
-		makeCanvasElements(imagesHolderElem, imgArr, params);
+		makeCanvasElements(imagesHolderElem, imgArray, params);
 	});
 }
 
@@ -60,11 +62,12 @@ function callLoadLabelsFromFile(){
 	data.labelCount = +document.getElementById('img-count').value;		//same count as images.. makes sense right?
 	
 	//in processFile.js
-	LoadLabelsFromFile(data, function(lblArray){
-		console.log("Labels from file:" + lblArray);
+	LoadLabelsFromFile(data, function(lblArrayLocal){
+		console.log("Labels from file:" + lblArrayLocal);
+		lblArray = lblArrayLocal;
 		//prepare element and params for the images generating function.
 		var imagesHolderElem = document.getElementById('imageHolder');
-		addLablesToCanvases(imagesHolderElem, lblArray);
+		addLablesToCanvases(imagesHolderElem, lblArrayLocal);
 	});
 }
 
@@ -77,11 +80,17 @@ function constructNetwork(){
 	initNetwork(	params,
 					+document.getElementById('nn-features').value,
 					+document.getElementById('nn-hidden-layer-count').value,
-					+document.getElementById('nn-hidden-layer-size').value
+					+document.getElementById('nn-hidden-layer-size').value,
+					+document.getElementById('nn-learning-rate').value
 				); 	
 }
 
-
+/*Trains a network.. using methods in jsNN.js*/
+function callTrainNetwork(){
+	//This will later be the partition point once user has selected training set. 
+	var imagesToTrainWithArray = imgArr;
+	trainNetwork(imagesToTrainWithArray);
+}
 </script>
 
 </head>
@@ -155,6 +164,7 @@ function constructNetwork(){
 					Network Architecture..<br> 
 					Hidden layers:<input class="numberinputs" type="number" id="nn-hidden-layer-count" value="3" /><br>
 					Nodes in each hidden layer:<input class="numberinputs" type="number" id="nn-hidden-layer-size" value="5" /><br>
+					Learning Rate: <input class="numberinputs" type="number" id="nn-learning-rate" step=".1" value="0.2" /><br>
 					<button type="button" class="clickbutton" onclick="constructNetwork()">Construct network</button> or 
 					<button type="button" class="clickbutton" onclick="loadNetwork()">Load from file</button>
 				</div>
@@ -169,7 +179,7 @@ function constructNetwork(){
 					Training parameters<br>
 					Error percentage:<input class="numberinputs" type="number" id="nn-stop-error" value="0" /><br>
 					Training cycles:<input class="numberinputs" type="number" id="nn-stop-cycles" value="4" /><br>
-					<button type="button" class="clickbutton" onclick="trainNetwork()">Train network</button>
+					<button type="button" class="clickbutton" onclick="callTrainNetwork()">Train network</button>
 				</div>
 			</div>
 		</div>

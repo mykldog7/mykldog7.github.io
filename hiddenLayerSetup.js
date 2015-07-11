@@ -23,7 +23,7 @@ function setupHiddenNetworkLayers(nodeArray, numHiddenLayers, nodesPerHiddenLaye
 			nodeArray.forEach(function(nodeI){
 				if(nodeI.layer == prevLayerTag){
 					//go ahead and add it.
-					newNode.influencers.push({influencer_id: nodeI.id, weight: getRand(-1,1)});
+					newNode.influencers.push({influencerId: nodeI.id, weight: getRand(-1,1)});
 				}
 			});
 			// finally add the completed node to the layer.. 
