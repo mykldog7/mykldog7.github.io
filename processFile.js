@@ -71,3 +71,19 @@ function LoadLabelsFromFile(data, callbackFunction){
 	//actually read the file.
 	reader.readAsArrayBuffer(data.file) 
 }
+
+//For reading networks
+function LoadNetworkFromFile(file, callbackFunction){
+	//Create file reader
+	var reader = new FileReader();
+	//When reading is completed we will... callbackFunction. attach event handler. 
+	reader.onloadend = function(evt){
+		if (evt.target.readyState == FileReader.DONE){
+			//as the file was read as text the result is a string.  
+			var net = JSON.parse(reader.result);		// give the string to the JSON parser to turn into an object. 
+			callbackFunction(net);		//return the object to callbackFunction
+		}
+	}
+	//actually read the file.
+	reader.readAsText(file) 
+}

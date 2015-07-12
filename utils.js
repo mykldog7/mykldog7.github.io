@@ -13,6 +13,15 @@ function getId(){
 	return next_vaild_id-1;
 }
 
+/*Compare two arrays for equal elements.*/
+function arrEqual(a,b){
+	if(a.length != b.length) {return false;}
+	for(var i = a.length;i>0;i--){
+		if(a[i] != b[i]){ return false; }
+	}
+	return true;
+}
+
 /*Returns the node, given the id.. Used all the time.*/
 function getNodeWithID(id) {
     for (var i = 0, len = NeuralNetwork.nodes.length; i < len; i++) {

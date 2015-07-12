@@ -9,6 +9,7 @@
 <!-- Scripts -->
 <script src="lib/jquery-2.1.4.min.js"></script> 
 <script src="lib/bootstrap-3.3.5-dist/js/bootstrap.min.js"></script>
+<script src="lib/filesaver.js"></script>
 <script src="processFile.js"></script>
 <script src="makeCanvas.js"></script>
 <script src="jsNN.js"></script>
@@ -17,6 +18,7 @@
 <script src="outputLayers.js"></script>
 <script src="utils.js"></script>
 <script src="nntrain.js"></script>
+<script src="nnapply.js"></script>
 
 <!-- CSS -->
 <link href="lib/bootstrap-3.3.5-dist/css/bootstrap.min.css" rel="stylesheet">
@@ -34,13 +36,15 @@ var NeuralNetwork;
 /*Grabs the values from the fields and makes a data object and then calls the method in processFile.js*/
 function callLoadImagesFromFile(){
 	//Construct data object with configuration parameters and file data. 
-	var data = {};
+	var data = {}; 
 	data.file = document.getElementById('imageFileSelector').files[0];
-	data.initOffset = +document.getElementById('img-bytes-before').value;
-	data.imageCount = +document.getElementById('img-count').value;
-	data.imageWidth = +document.getElementById('img-dim-width').value;
-	data.imageHeight = +document.getElementById('img-dim-height').value;
-	data.imageSpacing = +document.getElementById('img-bytes-between').value;
+	if(data.file == undefined){alert("Please choose a file first."); return;}		//errorchecking 
+	
+	data.initOffset = +$("#img-bytes-before").val();
+	data.imageCount = +$("#img-count").val();
+	data.imageWidth = +$("#img-dim-width").val();
+	data.imageHeight = +$("#img-dim-height").val();
+	data.imageSpacing = +$("#img-bytes-between").val();
 	
 	//in processFile.js
 	LoadImagesFromFile(data, function(imgArray){
@@ -49,25 +53,27 @@ function callLoadImagesFromFile(){
 		//prepare element and params for the images generating function.
 		var imagesHolderElem = document.getElementById('imageHolder');
 		var params = {width: data.imageWidth, height: data.imageHeight};
-		makeCanvasElements(imagesHolderElem, imgArray, params);
+		makeCanvasElements(imagesHolderElem, imgArray, params);		// in makeCanvas.js
 	});
 }
 
 /*Grab the labels from the label file and then place on top of canvas elements.*/
 function callLoadLabelsFromFile(){
-	var data = {};
+	var data = {};		//assemble data object to pass to function.
 	data.file = document.getElementById('labelFileSelector').files[0];
-	data.initOffset = +document.getElementById('label-bytes-before').value;
-	data.spaceBetweenLabels = +document.getElementById('label-bytes-between').value;
-	data.labelCount = +document.getElementById('img-count').value;		//same count as images.. makes sense right?
+	if(data.file == undefined){alert("Please choose a file first."); return;}		//errorchecking 
 	
+	data.initOffset = +$("#label-bytes-before").val();
+	data.spaceBetweenLabels = +$("#label-bytes-between").val();
+	data.labelCount = +$("#label-count").val();		
+	if(data.labelCount > imgArr.length) {alert("Can't load more labels than images. Load more images."); return;}
 	//in processFile.js
 	LoadLabelsFromFile(data, function(lblArrayLocal){
 		console.log("Labels from file:" + lblArrayLocal);
 		lblArray = lblArrayLocal;
 		//prepare element and params for the images generating function.
 		var imagesHolderElem = document.getElementById('imageHolder');
-		addLablesToCanvases(imagesHolderElem, lblArrayLocal);
+		addLablesToCanvases(imagesHolderElem, lblArrayLocal);		// in makeCanvas.js
 	});
 }
 
@@ -88,9 +94,48 @@ function constructNetwork(){
 /*Trains a network.. using methods in jsNN.js*/
 function callTrainNetwork(){
 	//This will later be the partition point once user has selected training set. 
-	var imagesToTrainWithArray = imgArr;
-	trainNetwork(imagesToTrainWithArray);
+	//pass in global imgArr and label array.. 
+	if(lblArray.length == 0){ alert("Can't train without labels. Load some and try again."); return;}
+	if(imgArr.length == 0){ alert("Can't train without images. Load some and try again."); return;}
+	$("#training-result").css("display", "none");			//swap which is currently visible. 
+	$("#training-progress").css("display", "inline");
+	setTimeout(trainNetwork, 250,	imgArr, lblArray,		//setTimeout (function, timeout, funcARG1, funcARG2, ... )
+					+document.getElementById('nn-stop-error').value, 
+					+document.getElementById('nn-stop-cycles').value,
+					function callback(accuracy, countRemain){
+						$("#training-result").html("&nbsp;Achieved accuracy: " +accuracy.toFixed(4));	//update value.. 
+						$("#training-result").css("display", "inline");			//swap which is currently visible. 
+						$("#training-progress").css("display", "none");
+					}
+				);	//delay 20 ms to allow the loading css/span to be shown.
 }
+
+/*Apply the network to unlabeled images in the imgArr*/
+function callClassifyUnlabeledImages(){ 				//further implemented in jsNN.js	
+	applyNetworkToUnlabledImages(document.getElementById('imageHolder'), imgArr.slice(lblArray.length));			//send all in the slice after the lblArray finishes..(unlabeled) 
+}
+
+/*Prepares and then turns the NeuralNet into a JSON object for the user to download.*/
+function saveNetwork(){
+	networkExport(); 	//defined in jsNN.js
+}
+
+/*Load network from file.. and parse the JSON.*/
+function loadNetwork(){
+	var tfile = document.getElementById('networkFileSelector').files[0];
+	if(tfile == undefined){alert("Please choose a file first.");}			//stop user from having no feedback errors. 
+	networkImport(tfile); 	//defined in jsNN.js
+}
+
+/*Set the network configuration boxes to match the currently loaded network. */
+function updateScreenWithLoadedNetworkValues(){
+	//using jquery.
+	$("#nn-features").val(NeuralNetwork.params.features);
+	$("#nn-hidden-layer-count").val(NeuralNetwork.params.hiddenLayerCount);
+	$("#nn-hidden-layer-size").val(NeuralNetwork.params.hiddenLayerSize);
+	$("#nn-learning-rate").val(NeuralNetwork.params.learningRate);
+}
+
 </script>
 
 </head>
@@ -125,7 +170,7 @@ function callTrainNetwork(){
 	<div class="row">
 		<div class="col-sm-6 col-md-4 col-lg-4">
 			<div class="page-element">
-				<h2>Load Image/Label Files...</h2>
+				<h2>Load Image Files...</h2>
 				<div>
 					Image file options:<br>
 					Offset to first image:<input class="numberinputs" type="number" id="img-bytes-before" value="16" /><br>
@@ -133,18 +178,27 @@ function callTrainNetwork(){
 					Width:<input class="numberinputs" type="number" id="img-dim-width" value="28" />&nbsp;
 					Height:<input class="numberinputs" type="number" id="img-dim-height" value="28" /><br>
 					Bytes between images:<input class="numberinputs" type="number" id="img-bytes-between" value="0" /><br>
-					Image count:<input class="numberinputs" type="number" id="img-count" value="4" /><br>
-					Specify file:
+					Image count:<input class="numberinputs" type="number" id="img-count" value="200" /><br>
 					<input type="file" id="imageFileSelector" />
 					<button type="button" class="clickbutton" onclick="callLoadImagesFromFile()">Load Images</button><br><br>
+				</div>
+			</div>
+		</div>
+		
+		<div class="col-sm-6 col-md-4 col-lg-4">
+			<div class="page-element">
+				<h2>Load Labels...</h2>
+				<div>
 					Label file options:<br>
 					Offset to first label:<input class="numberinputs" type="number" id="label-bytes-before" value="8" /><br>
 					Bytes between labels:<input class="numberinputs" type="number" id="label-bytes-between" value="0" /><br>
+					Label count:<input class="numberinputs" type="number" id="label-count" value="180" /><br>
 					<input type="file" id="labelFileSelector" />
 					<button type="button" class="clickbutton" onclick="callLoadLabelsFromFile()">Load Labels</button>
 				</div>
 			</div>
 		</div>
+		<div class="clearfix visible-sm"></div>
 		<div class="col-sm-6 col-md-4 col-lg-4">
 			<div class="page-element">
 				<h2>View Images...</h2>
@@ -155,34 +209,56 @@ function callTrainNetwork(){
 				</div>
 			</div>
 		</div>
-		<div class="clearfix visible-sm"></div>
+		<div class="clearfix visible-md visible-lg"></div>
 		<div class="col-sm-6 col-md-4 col-lg-4">
 			<div class="page-element">
 				<h2>Configure Neural Net...</h2>
 				<div>Neural Net parameters<br>
-					Number of Features<input class="numberinputs" type="number" id="nn-features" value="10" /><br>
+					Number of Features<input class="numberinputs" type="number" id="nn-features" value="30" /><br>
 					Network Architecture..<br> 
-					Hidden layers:<input class="numberinputs" type="number" id="nn-hidden-layer-count" value="3" /><br>
-					Nodes in each hidden layer:<input class="numberinputs" type="number" id="nn-hidden-layer-size" value="5" /><br>
+					Hidden layers:<input class="numberinputs" type="number" id="nn-hidden-layer-count" value="2" /><br>
+					Nodes in each hidden layer:<input class="numberinputs" type="number" id="nn-hidden-layer-size" value="18" /><br>
 					Learning Rate: <input class="numberinputs" type="number" id="nn-learning-rate" step=".1" value="0.2" /><br>
-					<button type="button" class="clickbutton" onclick="constructNetwork()">Construct network</button> or 
-					<button type="button" class="clickbutton" onclick="loadNetwork()">Load from file</button>
+					<button type="button" class="clickbutton" onclick="constructNetwork()">Construct network</button>
+				</div>
+			</div>
+		</div>
+		<div class="col-sm-6 col-md-4 col-lg-4">
+			<div class="page-element">
+				<h2>Train Network...</h2>
+				<div>Training only involves labeled images.<br>
+					Training halt parameters<br>
+					Accuracy percent:<input class="numberinputs" type="number" id="nn-stop-error" step=".01" value="0.91" /><br>
+					Training cycles:<input class="numberinputs" type="number" id="nn-stop-cycles" value="10" /><br>
+					<button type="button" class="clickbutton" onclick="callTrainNetwork()">Train network</button>
+					<span style="display: none" id="training-progress">
+						&nbsp;<span class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span> Training...
+					</span>
+					<span style="display: inline" id="training-result"></span>
+					
+				</div>
+			</div>
+		</div>
+		<div class="col-sm-6 col-md-4 col-lg-4">
+			<div class="page-element">
+				<h2>Save/Load Network...</h2>
+				<div>Save the network and load it later.<br>
+					<input type="file" id="networkFileSelector" />
+					<button type="button" class="clickbutton" onclick="loadNetwork()">Load network</button><br>
+					<button type="button" class="clickbutton" onclick="saveNetwork()">Save network</button>
 				</div>
 			</div>
 		</div>
 		<div class="clearfix visible-md visible-lg"></div>
 		<div class="col-sm-6 col-md-4 col-lg-4">
 			<div class="page-element">
-				<h2>Train Network...</h2>
-				<div>Partition Images<br>
-					Percentage for training:<input class="numberinputs" type="number" id="dataset-training-percent" value="100" /><br>
-					Training parameters<br>
-					Error percentage:<input class="numberinputs" type="number" id="nn-stop-error" value="0" /><br>
-					Training cycles:<input class="numberinputs" type="number" id="nn-stop-cycles" value="4" /><br>
-					<button type="button" class="clickbutton" onclick="callTrainNetwork()">Train network</button>
+				<h2>Apply Neural Net...</h2>
+				<div>...to classify unseen images. Images that have no labels will be given best-guess labels by the network.<br>
+					<button type="button" class="clickbutton" onclick="callClassifyUnlabeledImages()">Classify images</button>
 				</div>
 			</div>
 		</div>
+		
 	</div>
 	
 </div>

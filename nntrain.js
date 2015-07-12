@@ -5,12 +5,13 @@
  */
 "use strict"; //bug splatterer
 
-/*Add utilities to the NeuralNetwork itself.*/
+/*Add utilities to the NeuralNetwork itself. These utilities provide the training functions. They are not saved.*/
 function attachMethodsToNeuralNetwork(){
 	//place the image before the NN. This allows it to be accessed apart from the image array. 
 	NeuralNetwork.lookAtImage = function(img){
 		NeuralNetwork.image = img;
 	};
+	
 	/*Propagate values through the network from inputs towards outputs.*/
 	NeuralNetwork.doForwardPass= function(){
 		if(NeuralNetwork.image == undefined){console.log("No image defined. Can't do forward pass."); return;}
@@ -40,8 +41,38 @@ function attachMethodsToNeuralNetwork(){
 				node.outputValue = transferFunction(weightedSumOfInfluencers);		//Transfer functionin utils.js
 			}
 		});
-		console.log("Forward pass completed.");
+		//console.log("Forward pass completed.");
 	};
+	
+	/*After forward pass is applied, get the resultant classification.*/
+	NeuralNetwork.getOuputVector= function(){
+		var outVec = [];
+		NeuralNetwork.nodes.forEach(function(node){
+			if(node.layer == "output"){
+			   outVec.push(node.outputValue);
+			}
+		});
+		return outVec;
+	};
+	
+	/*Returns the outputVector, but with highest value made either 1 and lowest made 0.*/
+	NeuralNetwork.getOuputVectorNormalized= function(){
+		var inVec = NeuralNetwork.getOuputVector();
+		var highestResult = -1;		//every result should be higher than this. 
+		var highestIndex = 0;
+		//find which location is the highest. 
+		inVec.forEach(function(val, index){
+			if (val > highestResult) {
+				highestResult = val;
+				highestIndex = index;
+			}
+		});
+		// setup result array with the biggest value equal 1.
+		var outVec = [0,0,0,0,0,0,0,0,0,0];
+		outVec[highestIndex] = 1;
+		return outVec;
+	};
+	
 	/*Use the results of the forward pass to adjust the weights. The expectedOutputsArray is a vector describing the expected output.*/
 	NeuralNetwork.doBackwardPass= function(expectedOutputsArray){
 		//for each outputNode(same as digit) calc an error
@@ -49,20 +80,41 @@ function attachMethodsToNeuralNetwork(){
 			var outNode = getOutputNode(index);		//grab the output node that corresponds to this digit.//function in utils.js.
 			outNode.beta =  desiredOut - outNode.outputValue;
 		});
-		//now, for the rest of the nodes. 
+		//now, for the rest of the nodes. //input nodes don't need a beta value. 
 		NeuralNetwork.nodes.reverse().forEach(function(node){
-			if(node.layer.substr(0,6) == "hidden"){
+			if(node.layer.substr(0,6) == "hidden" || node.layer == "input"){
 				var sum =0;
 				node.effects.forEach(function(effNode){	//effectedNode
 					var effectedNode = getNodeWithID(effNode.effectedNodeId);
-					sum += (+effNode.effectweight*+effectedNode.outputValue*(1-+effectedNode.outputValue)*+effectedNode.beta);
+					sum += (effNode.effectWeight*effectedNode.outputValue*(1-effectedNode.outputValue)*effectedNode.beta);
 				});
 				node.beta = sum;	//sum for all nodes in next(forward)layer: weight to that node*output of that node*(1-outputagain)*that nodes beta. 
 			}
 		});
-		
-	}; 
-	NeuralNetwork.applyWeightChange= function(){};
+		NeuralNetwork.nodes.reverse();	//rereverse so that it is the forward direction again. 
+		//console.log("Backward pass completed.");
+	};
+	
+	/*Determine and Apply weight adjustment */
+	NeuralNetwork.applyWeightChanges= function(){
+		NeuralNetwork.nodes.forEach(function(node){
+			if(node.effects != undefined){
+				node.effects.forEach(function(effNodeRef){
+					var effectedNode = getNodeWithID(effNodeRef.effectedNodeId); 
+					//calculate weight delta
+					var weightDelta = NeuralNetwork.params.learningRate*node.outputValue*effectedNode.outputValue*(1-effectedNode.outputValue)*effectedNode.beta;
+					//apply weight delta in both directions. in effectedNode and influencerNode
+					//adjust weight in other nodes influencers array. 
+					effectedNode.influencers.forEach(function(influencer){
+						if(influencer.influencerId == node.id) {influencer.weight += weightDelta;}
+					});
+					//adjust this nodes weight in effects array. 
+					effNodeRef.effectWeight += weightDelta;
+				});
+			}
+		});
+		//console.log("Weight changes calculated and applied");
+	};
 }
 
 /*Loop over all nodes and attach these methods to corresponding nodes.*/
@@ -70,10 +122,16 @@ function removeExtrasFromNodes(){
 	NeuralNetwork.nodes.forEach(function(node){
 		node.outputValue = undefined;
 		node.effects = undefined;
+		node.beta = undefined;
 	});
 }
 
 /*Remove - this is done before the network is saved..*/
 function removeMethodsFromNeuralNetwork(){
 	NeuralNetwork.lookAtImage = undefined;
+	NeuralNetwork.image = undefined;
+	NeuralNetwork.getOuputVectorNormalized=undefined;
+	NeuralNetwork.getOuputVector=undefined;
+	NeuralNetwork.doForwardPass = undefined;
+	NeuralNetwork.doBackwardPass = undefined;
 }

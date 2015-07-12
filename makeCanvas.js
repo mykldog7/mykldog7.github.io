@@ -49,3 +49,20 @@ function addLablesToCanvases(parentELEM, labelArray){
 		gcontext.fillText(""+label, xO, yO+h);				//actually draw text. 
 	});
 }
+
+/*Add labels to canvas elements starting at offset. And specifying a colour.*/
+function addLablesToCanvasesExt(parentELEM, labelArray, offset, lblColor1, lblColor2){
+	labelArray.forEach(function(label,index){
+		var cElem = document.getElementById("image-"+(index+offset));
+		var gcontext = cElem.getContext("2d");
+		var xO = 21;		//postion and size of the small label...
+		var yO = 18;
+		var w = 7;
+		var h = 10;
+		gcontext.fillStyle = lblColor1; //"rgba(144, 238, 144, 0.6)";	//color of box.	
+		gcontext.fillRect(xO, yO, w, h)
+		gcontext.font = "9pt sans-serif";
+		gcontext.fillStyle = lblColor2; //"yellow";						//color of text.	
+		gcontext.fillText(""+label, xO, yO+h);				//actually draw text. 
+	});
+}
