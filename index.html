@@ -258,6 +258,24 @@ function updateScreenWithLoadedNetworkValues(){
 				</div>
 			</div>
 		</div>
+		<div class="col-sm-6 col-md-4 col-lg-4">
+			<div class="page-element">
+				<h2>Network Visualizer</h2>
+				Click to see a visualization of the network structure and weighting.<br>
+				<button type="button" class="clickbutton" onclick="drawVisualization.()">Visualize</button>
+				<svg id="networkVis" width="290" height="290" >
+				
+			</div>
+		</div>
+		<div class="col-sm-6 col-md-4 col-lg-4">
+			<div class="page-element">
+				<h2>Classify my digit.</h2>
+				<div>Draw a digit and click classify to classify your own digit.<br>
+				<canvas id="canvasToDrawDigit" width="280" height="280"></canvas>
+					<button type="button" class="clickbutton" onclick="fubc()">Classify!</button>
+				</div>
+			</div>
+		</div>
 		
 	</div>
 	
