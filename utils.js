@@ -5,6 +5,21 @@
  */
 "use strict";
 
+/*Calculates the cumulative offset on the page of a given element. Used by the drawdigit canvas.*/
+var cumulativeOffset = function(element) {
+    var top = 0, left = 0;
+    do {
+        top += element.offsetTop  || 0;
+        left += element.offsetLeft || 0;
+        element = element.offsetParent;
+    } while(element);
+
+    return {
+        top: top,
+        left: left
+    };
+};
+
 //Used for generating nodes id numbers. Each must be unique.. watch for syncronization errors.. 
 // As far as I know its single threaded throughout the network construction code. I've used callbacks, but they are sequential.
 var next_vaild_id = 1;

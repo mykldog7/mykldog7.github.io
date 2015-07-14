@@ -19,6 +19,7 @@
 <script src="utils.js"></script>
 <script src="nntrain.js"></script>
 <script src="nnapply.js"></script>
+<script src="drawDigit.js"></script>
 
 <!-- CSS -->
 <link href="lib/bootstrap-3.3.5-dist/css/bootstrap.min.css" rel="stylesheet">
@@ -136,6 +137,19 @@ function updateScreenWithLoadedNetworkValues(){
 	$("#nn-learning-rate").val(NeuralNetwork.params.learningRate);
 }
 
+/*Setup canvas thing so the user can draw on it. */
+
+function clearCanvas(){
+	g_context.fillStyle="#000000";
+	g_context.fillRect(0, 0, g_context.canvas.width, g_context.canvas.height); // Clears the canvas
+	g_clickX = new Array();
+	g_clickY = new Array();
+	g_clickDrag = new Array();
+}
+$(function(){		//document on ready function.
+	setupCanvasToDraw(document.getElementById("canvasToDrawDigit"));
+	clearCanvas();	// intially make it black. 
+});
 </script>
 
 </head>
@@ -270,9 +284,12 @@ function updateScreenWithLoadedNetworkValues(){
 		<div class="col-sm-6 col-md-4 col-lg-4">
 			<div class="page-element">
 				<h2>Classify my digit.</h2>
-				<div>Draw a digit and click classify to classify your own digit.<br>
-				<canvas id="canvasToDrawDigit" width="280" height="280"></canvas>
+				<div>Draw a digit and classify the digit.<br>
+				<canvas id="canvasToDrawDigit" width="280" height="280"></canvas><br>
+					<button type="button" class="clickbutton" onclick="clearCanvas()">Clear</button>
 					<button type="button" class="clickbutton" onclick="fubc()">Classify!</button>
+					
+					
 				</div>
 			</div>
 		</div>
