@@ -100,7 +100,7 @@ function callTrainNetwork(){
 	if(imgArr.length == 0){ alert("Can't train without images. Load some and try again."); return;}
 	$("#training-result").css("display", "none");			//swap which is currently visible. 
 	$("#training-progress").css("display", "inline");
-	setTimeout(trainNetwork, 250,	imgArr, lblArray,		//setTimeout (function, timeout, funcARG1, funcARG2, ... )
+	setTimeout(trainNetwork, 350,	imgArr, lblArray,		//setTimeout (function, timeout, funcARG1, funcARG2, ... )
 					+document.getElementById('nn-stop-error').value, 
 					+document.getElementById('nn-stop-cycles').value,
 					function callback(accuracy, countRemain){
@@ -138,18 +138,25 @@ function updateScreenWithLoadedNetworkValues(){
 }
 
 /*Setup canvas thing so the user can draw on it. */
-
 function clearCanvas(){
 	g_context.fillStyle="#000000";
 	g_context.fillRect(0, 0, g_context.canvas.width, g_context.canvas.height); // Clears the canvas
 	g_clickX = new Array();
 	g_clickY = new Array();
 	g_clickDrag = new Array();
+	
+	$("#processed-image-here").html("");
 }
 $(function(){		//document on ready function.
 	setupCanvasToDraw(document.getElementById("canvasToDrawDigit"));
 	clearCanvas();	// intially make it black. 
 });
+
+function classifyUsersImage(){
+	if(NeuralNetwork.params == undefined){alert("No Network is defined. Please construct or load one then try again."); return;} 
+	applyNetworkToCanvas();
+}
+
 </script>
 
 </head>
@@ -287,7 +294,8 @@ $(function(){		//document on ready function.
 				<div>Draw a digit and classify the digit.<br>
 				<canvas id="canvasToDrawDigit" width="280" height="280"></canvas><br>
 					<button type="button" class="clickbutton" onclick="clearCanvas()">Clear</button>
-					<button type="button" class="clickbutton" onclick="fubc()">Classify!</button>
+					<button type="button" class="clickbutton" onclick="classifyUsersImage()">Classify!</button>
+					<div id="processed-image-here"></div>
 					
 					
 				</div>
