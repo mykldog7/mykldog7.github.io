@@ -157,6 +157,11 @@ function classifyUsersImage(){
 	applyNetworkToCanvas();
 }
 
+/*Make tabs work. uses jQuery*/
+$(function() {
+    $( "#tabs" ).tabs();
+  });
+
 </script>
 
 </head>
@@ -175,137 +180,140 @@ function classifyUsersImage(){
 		</div>
 		<div class="collapse navbar-collapse" id="top-navbar">
 			<ul class="nav navbar-nav navbar-right">
-				<li><a href="#">Home</a></li>
-				<li><a href="#">About</a></li>
-				<li><a href="#">Hire Me</a></li>
+				<li><a href="#main">Home</a></li>
+				<li><a href="#about">About</a></li>
+				<li><a href="#hire">Hire Me</a></li>
 			</ul>
 		</div>
 	</div>
 </div>
 
 <!-- Content -->
-<div class="container">
-	<div class="row">
-		<div class="col-sm-10"><h2 style="margin-top: 0px;">JavaScript Neural Network Digit Recognizer</h2></div>
-	</div>
-	<div class="row">
-		<div class="col-sm-6 col-md-4 col-lg-4">
-			<div class="page-element">
-				<h2>Load Image Files...</h2>
-				<div>
-					Image file options:<br>
-					Offset to first image:<input class="numberinputs" type="number" id="img-bytes-before" value="16" /><br>
-					Image Dimensions:<br> 
-					Width:<input class="numberinputs" type="number" id="img-dim-width" value="28" />&nbsp;
-					Height:<input class="numberinputs" type="number" id="img-dim-height" value="28" /><br>
-					Bytes between images:<input class="numberinputs" type="number" id="img-bytes-between" value="0" /><br>
-					Image count:<input class="numberinputs" type="number" id="img-count" value="200" /><br>
-					<input type="file" id="imageFileSelector" />
-					<button type="button" class="clickbutton" onclick="callLoadImagesFromFile()">Load Images</button><br><br>
-				</div>
-			</div>
+<div id="tabs">
+	<div id="main" class="container">
+		<div class="row">
+			<div class="col-sm-10"><h2 style="margin-top: 0px;">JavaScript Neural Network Digit Recognizer</h2></div>
 		</div>
-		
-		<div class="col-sm-6 col-md-4 col-lg-4">
-			<div class="page-element">
-				<h2>Load Labels...</h2>
-				<div>
-					Label file options:<br>
-					Offset to first label:<input class="numberinputs" type="number" id="label-bytes-before" value="8" /><br>
-					Bytes between labels:<input class="numberinputs" type="number" id="label-bytes-between" value="0" /><br>
-					Label count:<input class="numberinputs" type="number" id="label-count" value="180" /><br>
-					<input type="file" id="labelFileSelector" />
-					<button type="button" class="clickbutton" onclick="callLoadLabelsFromFile()">Load Labels</button>
-				</div>
-			</div>
-		</div>
-		<div class="clearfix visible-sm"></div>
-		<div class="col-sm-6 col-md-4 col-lg-4">
-			<div class="page-element">
-				<h2>View Images...</h2>
-				<div>
-					<div class="row" id="imageHolder">
-						<div class="image-display">&nbsp;Once loaded, images will appear here. </div>
+		<div class="row">
+			<div class="col-sm-6 col-md-4 col-lg-4">
+				<div class="page-element">
+					<h2>Load Image Files...</h2>
+					<div>
+						Image file options:<br>
+						Offset to first image:<input class="numberinputs" type="number" id="img-bytes-before" value="16" /><br>
+						Image Dimensions:<br> 
+						Width:<input class="numberinputs" type="number" id="img-dim-width" value="28" />&nbsp;
+						Height:<input class="numberinputs" type="number" id="img-dim-height" value="28" /><br>
+						Bytes between images:<input class="numberinputs" type="number" id="img-bytes-between" value="0" /><br>
+						Image count:<input class="numberinputs" type="number" id="img-count" value="200" /><br>
+						<input type="file" id="imageFileSelector" />
+						<button type="button" class="clickbutton" onclick="callLoadImagesFromFile()">Load Images</button><br><br>
 					</div>
 				</div>
 			</div>
-		</div>
-		<div class="clearfix visible-md visible-lg"></div>
-		<div class="col-sm-6 col-md-4 col-lg-4">
-			<div class="page-element">
-				<h2>Configure Neural Net...</h2>
-				<div>Neural Net parameters<br>
-					Number of Features<input class="numberinputs" type="number" id="nn-features" value="30" /><br>
-					Network Architecture..<br> 
-					Hidden layers:<input class="numberinputs" type="number" id="nn-hidden-layer-count" value="2" /><br>
-					Nodes in each hidden layer:<input class="numberinputs" type="number" id="nn-hidden-layer-size" value="18" /><br>
-					Learning Rate: <input class="numberinputs" type="number" id="nn-learning-rate" step=".1" value="0.2" /><br>
-					<button type="button" class="clickbutton" onclick="constructNetwork()">Construct network</button>
+			
+			<div class="col-sm-6 col-md-4 col-lg-4">
+				<div class="page-element">
+					<h2>Load Labels...</h2>
+					<div>
+						Label file options:<br>
+						Offset to first label:<input class="numberinputs" type="number" id="label-bytes-before" value="8" /><br>
+						Bytes between labels:<input class="numberinputs" type="number" id="label-bytes-between" value="0" /><br>
+						Label count:<input class="numberinputs" type="number" id="label-count" value="180" /><br>
+						<input type="file" id="labelFileSelector" />
+						<button type="button" class="clickbutton" onclick="callLoadLabelsFromFile()">Load Labels</button>
+					</div>
 				</div>
 			</div>
-		</div>
-		<div class="col-sm-6 col-md-4 col-lg-4">
-			<div class="page-element">
-				<h2>Train Network...</h2>
-				<div>Training only involves labeled images.<br>
-					Training halt parameters<br>
-					Accuracy percent:<input class="numberinputs" type="number" id="nn-stop-error" step=".01" value="0.91" /><br>
-					Training cycles:<input class="numberinputs" type="number" id="nn-stop-cycles" value="10" /><br>
-					<button type="button" class="clickbutton" onclick="callTrainNetwork()">Train network</button>
-					<span style="display: none" id="training-progress">
-						&nbsp;<span class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span> Training...
-					</span>
-					<span style="display: inline" id="training-result"></span>
+			<div class="clearfix visible-sm"></div>
+			<div class="col-sm-6 col-md-4 col-lg-4">
+				<div class="page-element">
+					<h2>View Images...</h2>
+					<div>
+						<div class="row" id="imageHolder">
+							<div class="image-display">&nbsp;Once loaded, images will appear here. </div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="clearfix visible-md visible-lg"></div>
+			<div class="col-sm-6 col-md-4 col-lg-4">
+				<div class="page-element">
+					<h2>Configure Neural Net...</h2>
+					<div>Neural Net parameters<br>
+						Number of Features<input class="numberinputs" type="number" id="nn-features" value="30" /><br>
+						Network Architecture..<br> 
+						Hidden layers:<input class="numberinputs" type="number" id="nn-hidden-layer-count" value="2" /><br>
+						Nodes in each hidden layer:<input class="numberinputs" type="number" id="nn-hidden-layer-size" value="18" /><br>
+						Learning Rate: <input class="numberinputs" type="number" id="nn-learning-rate" step=".1" value="0.2" /><br>
+						<button type="button" class="clickbutton" onclick="constructNetwork()">Construct network</button>
+					</div>
+				</div>
+			</div>
+			<div class="col-sm-6 col-md-4 col-lg-4">
+				<div class="page-element">
+					<h2>Train Network...</h2>
+					<div>Training only involves labeled images.<br>
+						Training halt parameters<br>
+						Accuracy percent:<input class="numberinputs" type="number" id="nn-stop-error" step=".01" value="0.91" /><br>
+						Training cycles:<input class="numberinputs" type="number" id="nn-stop-cycles" value="10" /><br>
+						<button type="button" class="clickbutton" onclick="callTrainNetwork()">Train network</button>
+						<span style="display: none" id="training-progress">
+							&nbsp;<span class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span> Training...
+						</span>
+						<span style="display: inline" id="training-result"></span>
+						
+					</div>
+				</div>
+			</div>
+			<div class="col-sm-6 col-md-4 col-lg-4">
+				<div class="page-element">
+					<h2>Save/Load Network...</h2>
+					<div>Save the network and load it later.<br>
+						<input type="file" id="networkFileSelector" />
+						<button type="button" class="clickbutton" onclick="loadNetwork()">Load network</button><br>
+						<button type="button" class="clickbutton" onclick="saveNetwork()">Save network</button>
+					</div>
+				</div>
+			</div>
+			<div class="clearfix visible-md visible-lg"></div>
+			<div class="col-sm-6 col-md-4 col-lg-4">
+				<div class="page-element">
+					<h2>Apply Neural Net...</h2>
+					<div>...to classify unseen images. Images that have no labels will be given best-guess labels by the network.<br>
+						<button type="button" class="clickbutton" onclick="callClassifyUnlabeledImages()">Classify images</button>
+					</div>
+				</div>
+			</div>
+			<div class="col-sm-6 col-md-4 col-lg-4">
+				<div class="page-element">
+					<h2>Network Visualizer</h2>
+					Click to see a visualization of the network structure and weighting.<br>
+					<button type="button" class="clickbutton" onclick="drawVisualization.()">Visualize</button>
+					<svg id="networkVis" width="290" height="290" >
 					
 				</div>
 			</div>
-		</div>
-		<div class="col-sm-6 col-md-4 col-lg-4">
-			<div class="page-element">
-				<h2>Save/Load Network...</h2>
-				<div>Save the network and load it later.<br>
-					<input type="file" id="networkFileSelector" />
-					<button type="button" class="clickbutton" onclick="loadNetwork()">Load network</button><br>
-					<button type="button" class="clickbutton" onclick="saveNetwork()">Save network</button>
+			<div class="col-sm-6 col-md-4 col-lg-4">
+				<div class="page-element">
+					<h2>Classify my digit.</h2>
+					<div>Draw a digit and classify the digit.<br>
+					<canvas id="canvasToDrawDigit" width="280" height="280"></canvas><br>
+						<button type="button" class="clickbutton" onclick="clearCanvas()">Clear</button>
+						<button type="button" class="clickbutton" onclick="classifyUsersImage()">Classify!</button>
+						<div id="processed-image-here"></div>
+						
+						
+					</div>
 				</div>
 			</div>
-		</div>
-		<div class="clearfix visible-md visible-lg"></div>
-		<div class="col-sm-6 col-md-4 col-lg-4">
-			<div class="page-element">
-				<h2>Apply Neural Net...</h2>
-				<div>...to classify unseen images. Images that have no labels will be given best-guess labels by the network.<br>
-					<button type="button" class="clickbutton" onclick="callClassifyUnlabeledImages()">Classify images</button>
-				</div>
-			</div>
-		</div>
-		<div class="col-sm-6 col-md-4 col-lg-4">
-			<div class="page-element">
-				<h2>Network Visualizer</h2>
-				Click to see a visualization of the network structure and weighting.<br>
-				<button type="button" class="clickbutton" onclick="drawVisualization.()">Visualize</button>
-				<svg id="networkVis" width="290" height="290" >
-				
-			</div>
-		</div>
-		<div class="col-sm-6 col-md-4 col-lg-4">
-			<div class="page-element">
-				<h2>Classify my digit.</h2>
-				<div>Draw a digit and classify the digit.<br>
-				<canvas id="canvasToDrawDigit" width="280" height="280"></canvas><br>
-					<button type="button" class="clickbutton" onclick="clearCanvas()">Clear</button>
-					<button type="button" class="clickbutton" onclick="classifyUsersImage()">Classify!</button>
-					<div id="processed-image-here"></div>
-					
-					
-				</div>
-			</div>
+			
 		</div>
 		
 	</div>
-	
+	<div id="about"></div>
+	<div id="hireme"></div>
 </div>
-
 <!-- Footer -->
 <div><br><hr>&nbsp; Developed by Michael Riley - 2015</div>
 
