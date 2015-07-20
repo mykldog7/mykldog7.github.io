@@ -103,7 +103,7 @@ function callTrainNetwork(){
 	$("#training-progress").css("display", "inline");
 	setTimeout(trainNetwork, 500,	imgArr, lblArray,		//setTimeout (function, timeout, funcARG1, funcARG2, ... )
 					+document.getElementById('nn-stop-error').value, 
-					+document.getElementById('nn-stop-cycles').value,
+					+document.getElementById('nn-stop-cycles').value-1,
 					function callback(accuracy, countRemain){
 						$("#training-result").html("&nbsp;Achieved accuracy: " +accuracy.toFixed(4));	//update value.. 
 						$("#training-result").css("display", "inline");			//swap which is currently visible. 
@@ -238,7 +238,7 @@ $(function() {
 				<div class="page-element">
 					<h2>View Images...</h2>
 					<div>
-						<div class="row" id="imageHolder">
+						<div class="row" id="imageHolder" class="image-hold">
 							<div class="image-display">&nbsp;Once loaded, images will appear here. </div>
 						</div>
 					</div>
@@ -331,18 +331,39 @@ $(function() {
 										
 				</div>
 			</div>
-			<div class="clearfix visible-md visible-lg"></div>
 			<div class="col-sm-6 col-md-6 col-lg-6">
 				<div class="page-element">
 					<h2 style="margin-top: 0px;">How does it work?</h2> 
-					
+					An artificial neural network is used to classify hand written digits. <br>
+					For discussion of neural networks see: <a href="https://en.wikipedia.org/wiki/Artificial_neural_network">Wikipedia(Artificial Neural Network)</a>
+					<br><br>
+					Each image becomes the input for the network. Depending on the output of the network the best-guess of the digit is given by the network.<br>
+					This application makes use of features to become the inputs. And it uses 10 output nodes, one for each digit. The network architecture is left to the user to configure.<br>
+				</div>
+			</div>
+			<div class="clearfix visible-md visible-lg visible-sm"></div>
+			<div class="col-sm-6 col-md-6 col-lg-6">
+				<div class="page-element">
+					<h2 style="margin-top: 12px;">Example Usage</h2> 
+					First download the image and label files from this page. You only need one set. Start with the 1000 images/labels set. <br>
+					<br>
+					Then use the image loader module to load the images and the label loader module to load the labels. <br>
+					<br>
+					After reviewing the images and labels that were loaded, construct a network. The defaults should work well. <br>
+					<br>
+					When the network is constructed it begins with random weights and is unable to classify effectively. The network must be trained until the accuracy percentage is high enough. Use the train network module to train the network.<br>
+					<br>
+					Once the network accuracy is high enough it can be applied to classification tasks. <br>
+					<br>
+					Use the trained network to classify the unlabled images loaded above, or draw a digit and have it classified. This can take awhile to get right as hand written digits are different from mouse-drawn digits.<br>
+					<br>
+					Good luck.<br>
 										
 				</div>
 			</div>
-			
 			<div class="col-sm-6 col-md-6 col-lg-6">
 				<div class="page-element">
-					<h2 style="margin-top: 0px;">Files</h2>
+					<h2 style="margin-top: 12px;">Files</h2>
 	
 					Some demonstration files: <br>
 					<a href="data/mnist/t1k-images.idx3-ubyte" >1000 Images</a><br>
@@ -358,7 +379,10 @@ $(function() {
 	<div id="hireme" class="container">
 		<div class="row">
 			<h2 style="margin-top: 0px;">Hire Me</h2> 
-			I'm looking for work. 02102369891. 
+			I've recently graduated from Victoria University of Wellington. I achieved highly and enjoyed the artificial intelligence programming. <br><br>
+				Please send me an email on:<br> michael.roskill AT gmail.com<br><br>
+				I'd love to hear from you.
+				
 		</div>
 	</div>
 </div>

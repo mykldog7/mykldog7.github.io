@@ -10,9 +10,13 @@ body {
 	margin: 1px;
 }
 
-
 .image-display {
 	margin: 2px;
+}
+
+#imageHolder {
+	overflow-y: scroll;
+	height: 350px;
 }
 
 .glyphicon-refresh-animate {
