@@ -8,6 +8,7 @@
 
 <!-- Scripts -->
 <script src="lib/jquery-2.1.4.min.js"></script> 
+<script src="lib/jquery-ui.min.js"></script> 
 <script src="lib/bootstrap-3.3.5-dist/js/bootstrap.min.js"></script>
 <script src="lib/filesaver.js"></script>
 <script src="processFile.js"></script>
@@ -100,7 +101,7 @@ function callTrainNetwork(){
 	if(imgArr.length == 0){ alert("Can't train without images. Load some and try again."); return;}
 	$("#training-result").css("display", "none");			//swap which is currently visible. 
 	$("#training-progress").css("display", "inline");
-	setTimeout(trainNetwork, 350,	imgArr, lblArray,		//setTimeout (function, timeout, funcARG1, funcARG2, ... )
+	setTimeout(trainNetwork, 500,	imgArr, lblArray,		//setTimeout (function, timeout, funcARG1, funcARG2, ... )
 					+document.getElementById('nn-stop-error').value, 
 					+document.getElementById('nn-stop-cycles').value,
 					function callback(accuracy, countRemain){
@@ -108,7 +109,7 @@ function callTrainNetwork(){
 						$("#training-result").css("display", "inline");			//swap which is currently visible. 
 						$("#training-progress").css("display", "none");
 					}
-				);	//delay 20 ms to allow the loading css/span to be shown.
+				);	//delay 500 ms to allow the loading css/span to be shown.
 }
 
 /*Apply the network to unlabeled images in the imgArr*/
@@ -159,7 +160,7 @@ function classifyUsersImage(){
 
 /*Make tabs work. uses jQuery*/
 $(function() {
-    $( "#tabs" ).tabs();
+    $( "#tabset" ).tabs();
   });
 
 </script>
@@ -180,16 +181,23 @@ $(function() {
 		</div>
 		<div class="collapse navbar-collapse" id="top-navbar">
 			<ul class="nav navbar-nav navbar-right">
-				<li><a href="#main">Home</a></li>
-				<li><a href="#about">About</a></li>
-				<li><a href="#hire">Hire Me</a></li>
+				<li><a href="#" onclick="$( '#tabset' ).tabs( 'option', 'active', 0 );">Home</a></li>
+				<li><a href="#" onclick="$( '#tabset' ).tabs( 'option', 'active', 1 );">About</a></li>
+				<li><a href="#" onclick="$( '#tabset' ).tabs( 'option', 'active', 2 );">Hire Me</a></li>
 			</ul>
 		</div>
 	</div>
 </div>
 
 <!-- Content -->
-<div id="tabs">
+<div id="tabset">
+	<div style="display: none;">	
+		<ul>
+			<li><a href="#main">Home</a></li>
+			<li><a href="#about">About</a></li>
+			<li><a href="#hireme">Hire Me</a></li>
+		</ul>
+	</div>
 	<div id="main" class="container">
 		<div class="row">
 			<div class="col-sm-10"><h2 style="margin-top: 0px;">JavaScript Neural Network Digit Recognizer</h2></div>
@@ -205,7 +213,7 @@ $(function() {
 						Width:<input class="numberinputs" type="number" id="img-dim-width" value="28" />&nbsp;
 						Height:<input class="numberinputs" type="number" id="img-dim-height" value="28" /><br>
 						Bytes between images:<input class="numberinputs" type="number" id="img-bytes-between" value="0" /><br>
-						Image count:<input class="numberinputs" type="number" id="img-count" value="200" /><br>
+						Image count:<input class="numberinputs" type="number" id="img-count" value="1000" /><br>
 						<input type="file" id="imageFileSelector" />
 						<button type="button" class="clickbutton" onclick="callLoadImagesFromFile()">Load Images</button><br><br>
 					</div>
@@ -219,7 +227,7 @@ $(function() {
 						Label file options:<br>
 						Offset to first label:<input class="numberinputs" type="number" id="label-bytes-before" value="8" /><br>
 						Bytes between labels:<input class="numberinputs" type="number" id="label-bytes-between" value="0" /><br>
-						Label count:<input class="numberinputs" type="number" id="label-count" value="180" /><br>
+						Label count:<input class="numberinputs" type="number" id="label-count" value="900" /><br>
 						<input type="file" id="labelFileSelector" />
 						<button type="button" class="clickbutton" onclick="callLoadLabelsFromFile()">Load Labels</button>
 					</div>
@@ -241,10 +249,10 @@ $(function() {
 				<div class="page-element">
 					<h2>Configure Neural Net...</h2>
 					<div>Neural Net parameters<br>
-						Number of Features<input class="numberinputs" type="number" id="nn-features" value="30" /><br>
+						Number of Features<input class="numberinputs" type="number" id="nn-features" value="55" /><br>
 						Network Architecture..<br> 
-						Hidden layers:<input class="numberinputs" type="number" id="nn-hidden-layer-count" value="2" /><br>
-						Nodes in each hidden layer:<input class="numberinputs" type="number" id="nn-hidden-layer-size" value="18" /><br>
+						Hidden layers:<input class="numberinputs" type="number" id="nn-hidden-layer-count" value="1" /><br>
+						Nodes in each hidden layer:<input class="numberinputs" type="number" id="nn-hidden-layer-size" value="25" /><br>
 						Learning Rate: <input class="numberinputs" type="number" id="nn-learning-rate" step=".1" value="0.2" /><br>
 						<button type="button" class="clickbutton" onclick="constructNetwork()">Construct network</button>
 					</div>
@@ -256,7 +264,7 @@ $(function() {
 					<div>Training only involves labeled images.<br>
 						Training halt parameters<br>
 						Accuracy percent:<input class="numberinputs" type="number" id="nn-stop-error" step=".01" value="0.91" /><br>
-						Training cycles:<input class="numberinputs" type="number" id="nn-stop-cycles" value="10" /><br>
+						Training cycles:<input class="numberinputs" type="number" id="nn-stop-cycles" value="2" /><br>
 						<button type="button" class="clickbutton" onclick="callTrainNetwork()">Train network</button>
 						<span style="display: none" id="training-progress">
 							&nbsp;<span class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span> Training...
@@ -289,7 +297,8 @@ $(function() {
 				<div class="page-element">
 					<h2>Network Visualizer</h2>
 					Click to see a visualization of the network structure and weighting.<br>
-					<button type="button" class="clickbutton" onclick="drawVisualization.()">Visualize</button>
+					<button type="button" class="clickbutton" onclick="drawVisualization.()">Visualize</button><br>
+					... coming soon ...
 					<svg id="networkVis" width="290" height="290" >
 					
 				</div>
@@ -311,8 +320,47 @@ $(function() {
 		</div>
 		
 	</div>
-	<div id="about"></div>
-	<div id="hireme"></div>
+	<div id="about" class="container">
+		<div class="row">
+			<div class="col-sm-6 col-md-6 col-lg-6">
+				<div class="page-element">
+					<h2 style="margin-top: 0px;">About</h2> 
+					This project makes use of Neural Net techniques to classify handwritten digits. <br>
+					Each input image is 28x28 pixels. It is greyscale and contains a handwritten digit. Each image also requires a label in order to train the network. Once the network has seen a sufficient number of handwritten digits in can be used to classify images without labels.
+					<br>
+										
+				</div>
+			</div>
+			<div class="clearfix visible-md visible-lg"></div>
+			<div class="col-sm-6 col-md-6 col-lg-6">
+				<div class="page-element">
+					<h2 style="margin-top: 0px;">How does it work?</h2> 
+					
+										
+				</div>
+			</div>
+			
+			<div class="col-sm-6 col-md-6 col-lg-6">
+				<div class="page-element">
+					<h2 style="margin-top: 0px;">Files</h2>
+	
+					Some demonstration files: <br>
+					<a href="data/mnist/t1k-images.idx3-ubyte" >1000 Images</a><br>
+					<a href="data/mnist/t1k-labels.idx3-ubyte" >1000 Labels</a><br>
+					<a href="data/mnist/t10k-images.idx3-ubyte" >10 000 Images</a><br>
+					<a href="data/mnist/t10k-labels.idx3-ubyte" >10 000 Labels</a><br>
+					These files are from the dataset released by LeCunn, Cortes and Burges <a href="http://yann.lecun.com/exdb/mnist/">here</a>.<br>
+					
+				</div>
+			</div>
+		</div>
+	</div>
+	<div id="hireme" class="container">
+		<div class="row">
+			<h2 style="margin-top: 0px;">Hire Me</h2> 
+			I'm looking for work. 02102369891. 
+		</div>
+	</div>
 </div>
 <!-- Footer -->
 <div><br><hr>&nbsp; Developed by Michael Riley - 2015</div>

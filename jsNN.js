@@ -35,6 +35,7 @@ function initNetwork(imgDims, numInputs, hiddenLayerCount, nodesPerHiddenLayer, 
 
 /*trains the network... call all the smaller modular functions.*/
 function trainNetwork(imgs, lbls, stopPercent, stopCycles, callBackAfterEachCycle){
+	stopCycles--;	//decrement 1. to make loop execute correct number of times.
 	for(var cycle=stopCycles;cycle>=0;cycle--){
 		//for every label we can train on the image.. unlabeled images are useless. 
 		var totalCases = lbls.length;
