@@ -45,7 +45,7 @@ function generateInputs(nodeArray, imageDimensions, numberOfInputNodesToGenerate
 
 //Utility functions..
 //Generate a different offset from anchor.. plus one value of memory to stop multiple zeros being generated in row.
-var featureMaxRadius = 5;			//how far from the feature center can other interest pixels be?
+var featureMaxRadius = 8;			//how far from the feature center can other interest pixels be?
 var prevRandomValue;				//special storage to stop the function below returning zero twice in a row.
 function genRadialOffset(){		// returns a value between +maxRadius and -maxRadius. never returns zero twice in a row.
 	var a = Math.floor((Math.random() * 2*featureMaxRadius) + 1)-featureMaxRadius

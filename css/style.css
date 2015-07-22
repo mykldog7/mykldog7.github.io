@@ -2,12 +2,30 @@ body {
 	padding-top:0px; 
 }
 
+h2 {
+	padding-left: 8px;
+}
+
 .nav-top-padding {
 	padding-top: 9px;
 }
 
 .page-element {
 	margin: 1px;
+	/*From enjoycss.com*/
+	border: none;
+	-webkit-border-radius: 12px 12px 0 0;
+	border-radius: 12px 12px 0 0;
+	background: -webkit-linear-gradient(-90deg, rgba(239,239,239,1) 0, rgba(252,252,252,1) 50px, rgba(255,255,255,1) 100%);
+	background: -moz-linear-gradient(180deg, rgba(239,239,239,1) 0, rgba(252,252,252,1) 50px, rgba(255,255,255,1) 100%);
+	background: linear-gradient(180deg, rgba(239,239,239,1) 0, rgba(252,252,252,1) 50px, rgba(255,255,255,1) 100%);
+	background-position: 50% 50%;
+	-webkit-background-origin: padding-box;
+	background-origin: padding-box;
+	-webkit-background-clip: border-box;
+	background-clip: border-box;
+	-webkit-background-size: auto auto;
+	background-size: auto auto;
 }
 
 .image-display {
@@ -16,7 +34,7 @@ body {
 
 #imageHolder {
 	overflow-y: scroll;
-	height: 350px;
+	height: 300px;
 }
 
 .glyphicon-refresh-animate {
